@@ -6,7 +6,24 @@ describe('Controller: PostsCtrl', function () {
     beforeEach(module('angNews'));
 
     var PostsCtrl,
-        scope;
+        scope,
+        mockPost;
+
+    var expectedPosts = ['One', 'Two'];
+
+    beforeEach(function () {
+        mockPost = {
+            get: function() {
+                return expectedPosts
+            },
+            save: function() { },
+            delete: function() { }
+        };
+
+        module(function ($provide) {
+            $provide.value('Post', mockPost);
+        });
+    });
 
     // Initialize the controller and a mock scope
     beforeEach(inject(function ($controller, $rootScope) {
@@ -20,24 +37,21 @@ describe('Controller: PostsCtrl', function () {
         expect(scope.post.url).toBe('http://');
     });
 
-    it('should add post to posts on submit', function () {
+    it('should load posts from Post service', function() {
+       expect(scope.posts).toEqual(expectedPosts);
+    });
+
+    it('should save posts on submit', function () {
+        spyOn(mockPost, 'save');
         var expectedPost = {url: 'some url', title: 'some title'};
         scope.post = expectedPost;
         scope.submitPost();
-        expect(scope.posts[0]).toBe(expectedPost);
-    });
-
-    it('should reset post to default on submit', function () {
-        scope.post = {url: 'some url', title: 'some title'};
-        scope.submitPost();
-        expect(scope.post.url).toBe('http://');
+        expect(mockPost.save).toHaveBeenCalledWith(expectedPost, jasmine.any(Function));
     });
 
     it('should delete post', function() {
-        scope.posts = ['post1', 'post2', 'post3'];
+        spyOn(mockPost, 'delete');
         scope.deletePost(1);
-        expect(scope.posts.length).toBe(2);
-        expect(scope.posts[0]).toBe('post1');
-        expect(scope.posts[1]).toBe('post3');
+        expect(mockPost.delete).toHaveBeenCalledWith({id: 1}, jasmine.any(Function));
     });
 });
