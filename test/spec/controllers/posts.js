@@ -32,4 +32,12 @@ describe('Controller: PostsCtrl', function () {
         scope.submitPost();
         expect(scope.post.url).toBe('http://');
     });
+
+    it('should delete post', function() {
+        scope.posts = ['post1', 'post2', 'post3'];
+        scope.deletePost(1);
+        expect(scope.posts.length).toBe(2);
+        expect(scope.posts[0]).toBe('post1');
+        expect(scope.posts[1]).toBe('post3');
+    });
 });
