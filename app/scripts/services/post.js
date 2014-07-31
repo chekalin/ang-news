@@ -14,7 +14,6 @@ app.factory('Post',
                 return posts.$child(postId);
             },
             delete: function (postId) {
-                console.log(postId);
                 return posts.$remove(postId);
             }
         };
