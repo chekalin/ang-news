@@ -8,12 +8,14 @@ var app = angular
         'ngResource',
         'ngRoute',
         'ngSanitize',
-        'ngTouch'
-    ]);
+        'ngTouch',
+        'firebase'
+    ]).constant('FIREBASE_URL', 'https://sweltering-fire-6468.firebaseio.com/');
+
 app.config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
-        templateUrl: 'views/posts.html',
-        controller: 'PostsCtrl'
-      });
-  });
+        .when('/', {
+            templateUrl: 'views/posts.html',
+            controller: 'PostsCtrl'
+        });
+});

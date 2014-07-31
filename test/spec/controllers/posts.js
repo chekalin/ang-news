@@ -11,25 +11,24 @@ describe('Controller: PostsCtrl', function () {
 
     var expectedPosts = ['One', 'Two'];
 
-    beforeEach(function () {
+    beforeEach(inject(function (_$q_) {
         mockPost = {
-            get: function() {
-                return expectedPosts
+            all: expectedPosts,
+            create: function() {
+                var queryDeferred = _$q_.defer();
+                return queryDeferred.promise;
             },
-            save: function() { },
             delete: function() { }
         };
-
-        module(function ($provide) {
-            $provide.value('Post', mockPost);
-        });
-    });
+        spyOn(mockPost, 'create').andCallThrough();
+    }));
 
     // Initialize the controller and a mock scope
     beforeEach(inject(function ($controller, $rootScope) {
         scope = $rootScope.$new();
         PostsCtrl = $controller('PostsCtrl', {
-            $scope: scope
+            $scope: scope,
+            Post: mockPost
         });
     }));
 
@@ -42,16 +41,15 @@ describe('Controller: PostsCtrl', function () {
     });
 
     it('should save posts on submit', function () {
-        spyOn(mockPost, 'save');
         var expectedPost = {url: 'some url', title: 'some title'};
         scope.post = expectedPost;
         scope.submitPost();
-        expect(mockPost.save).toHaveBeenCalledWith(expectedPost, jasmine.any(Function));
+        expect(mockPost.create).toHaveBeenCalledWith(expectedPost);
     });
 
     it('should delete post', function() {
         spyOn(mockPost, 'delete');
         scope.deletePost(1);
-        expect(mockPost.delete).toHaveBeenCalledWith({id: 1}, jasmine.any(Function));
+        expect(mockPost.delete).toHaveBeenCalledWith(1);
     });
 });
